@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+    <title>BREAKOUT_GAME</title>
+
+    <style>
+        body { padding: 0; margin: 0; } 
+        canvas { background: #000000; display: block; margin: 0 auto; } 
+        body {background-color: #000000}
+    </style>
+
+</head>
+
+<body> 
+
+    <form name='rating' action='/cgi-bin/view_menu.py'> </form>
+
+    <h3><center>Super Game</center></h3>
+
+<canvas id="myCanvas" width="900" height="563"></canvas>
+
+<script>
+
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+	var Pressed = false;							
+	var flag = -1;
+	
+//Рисовалка рамки по периметру canvas
+    function drawFrame(){
+        //цвет линии
+        ctx.strokeStyle = '#ffffff';
+        //ширина линии
+        ctx.lineWidth = 1;
+        //Нарисовать прямоугольник  
+        ctx.strokeRect(0, 0, 900, 563);
+    }
+
+//Слушатель позиции мышки
+    canvas.addEventListener("mousemove", checkPos);
+
+//Слушатели нажатия кнопки клавиатуры в меню	
+	document.addEventListener("keydown", keyDownHandler, false); 							
+	document.addEventListener("keyup", keyUpHandler, false);	 							
+	
+	function keyDownHandler(e) { 							
+        if(e.keyCode == 66) {
+            Pressed = true;
+			flag += 1;
+			if (flag == 3) {
+				flag = 0;
+			}
+        }
+    }
+
+    function keyUpHandler(e) { 							
+        if(e.keyCode == 66) {
+            Pressed = false;
+        }
+    }
+	
+//Картинки для меню в качестве переменных
+    var backgroundImage = new Image(); 
+    var snowImage = new Image();   
+    var logoImage = new Image();
+    var playImage = new Image();
+    var ratingImage = new Image();
+    var ballImage = new Image();
+
+//timer
+    var frames = 30;
+    var timerId = 0;
+
+//непосредственное обновление картинки через периодический вызов функции update
+    timerId = setInterval(update, 1000/frames);
+    
+//Переменные движения
+    var backgroundY = 0;
+    var speedSnow = 1;
+
+//Переменные для тслеживания позиции мышки на экране
+    var mouseX;
+    var mouseY;
+
+//Переменные для описания шарика и его положений
+    var ballX = [0,0];
+    var ballY = [0,0];
+    var ballWidth = 50;
+    var ballHeight = 50;
+ 
+    var ballVisible = false;
+    var ballSize = ballWidth;
+    var ballRotate = 0;
+
+//Переменные для размеров кнопок
+    var buttonX = [205, 300];   //Положение по Х кнопок
+    var buttonY = [220, 400];   //Положение по Y кнопок
+    var buttonWidth = [300, 450];   //Ширина кнопки
+    var buttonHeight = [100, 100];  //Высота кнопки
+
+//Проверка нажатия мыши
+    var fadeId = 0;
+    canvas.addEventListener("mouseup", checkClick1);    //Listener для кнопки Play 
+    canvas.addEventListener("mouseup", checkClick2);    //Listener для кнопки Rating
+
+//переменная времени
+    var time = 0.0;
+
+//Сорсы картинок
+    backgroundImage.src = "Images/background.png";
+    logoImage.src = "Images/logo.png";  
+    playImage.src = "Images/play.png";
+    ratingImage.src = "Images/rating.png";
+    ballImage.src = "Images/ball.png";
+    snowImage.src = "Images/snow.png";
+
+//Инициализация массива изображений
+	var Images = [];
+	for(var i = 0; i < 3; i++) {
+		Images[i] = new Image();
+	}
+	Images[0].src = "Images/background.png";
+	Images[1].src = "Images/lvl1.png";
+	Images[2].src = "Images/background1.png";
+
+
+//Музыка меню
+	var mainMenuTheme = new Audio('Sounds/main_menu_theme.mp3');
+	var sound = 0;
+    
+  
+//Функции отрисовки картинок на экран
+    function drawbackground(){
+		ctx.drawImage(backgroundImage, 0, 0);
+    }
+	
+    //Выбор картинок фона из массива (Смена при нажатии кнопки B)
+	function backgroundchanger(){ 
+		if (Pressed == true) {
+			if (flag == 0) {
+				backgroundImage = Images[0];
+				drawbackground();
+			}
+			else if (flag == 1) {
+				backgroundImage = Images[1];
+				drawbackground();
+			}
+			else if (flag == 2) {
+				backgroundImage = Images[2];
+				drawbackground();
+			}
+		}
+	}
+
+    function drawlogo() {
+        ctx.drawImage(logoImage, 80, 50);
+    }
+
+    function drawplay() {
+        ctx.drawImage(playImage, 200, 220);
+    }
+
+    function drawrating() {
+        ctx.drawImage(ratingImage, 300, 400);
+    }
+
+    function drawsnow() {
+        ctx.drawImage(snowImage, 0, backgroundY - 563);
+    }
+
+//Обновление всей картинки и всего-всего
+    function update() {
+		if (sound == 0) {
+			mainMenuTheme.play();
+			sound++;
+		}
+		if (mainMenuTheme.ended == true) {
+			sound = 0;
+		}
+        clear();
+        move();
+        draw();
+    }
+
+//Описание функций для update()
+    function clear(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function move(){
+        backgroundY += speedSnow;
+        if(backgroundY == 1 * canvas.height){
+            backgroundY = 0;
+        }
+    }
+
+//Функция рисования всего
+    function draw(){
+		if (Pressed == true) {		 							
+			backgroundchanger();
+		}
+		drawbackground();
+        drawFrame();
+        drawsnow();
+        drawlogo();
+        drawplay();
+        drawrating();
+        if(ballVisible == true){
+            ctx.drawImage(ballImage, ballX[0] - (ballSize/2), ballY[0], ballSize, ballHeight);
+            ctx.drawImage(ballImage, ballX[1] - (ballSize/2), ballY[1], ballSize, ballHeight);
+        }
+    }
+
+//Остальные возможности   
+////////////////////////////////////////////////////////////////////////////
+//Функция проверки положения мыши на экране в зависимости от положения кнопок
+    function checkPos(mouseEvent){
+        mouseX = mouseEvent.pageX - this.offsetLeft;
+        mouseY = mouseEvent.pageY - this.offsetTop;
+
+        if(mouseX > buttonX[0] && mouseX < buttonX[0] + buttonWidth[0] && mouseY > buttonY[0] && mouseY < buttonY[0] + buttonHeight[0]){
+                ballVisible = true;
+                ballX[0] = buttonX[0] - (ballWidth/2) - 2;
+                ballY[0] = buttonY[0]+40;
+                ballX[1] = buttonX[0] + buttonWidth[0] + (ballWidth/2); 
+                ballY[1] = buttonY[0]+40;
+
+        }else
+        if(mouseX > buttonX[1] && mouseX < buttonX[1] + buttonWidth[1] && mouseY > buttonY[1] && mouseY < buttonY[1] + buttonHeight[1]){
+                ballVisible = true;
+                ballX[0] = buttonX[1] - (ballWidth/2) - 2;
+                ballY[0] = buttonY[1]+40;
+                ballX[1] = buttonX[1] + buttonWidth[1] + (ballWidth/2); 
+                ballY[1] = buttonY[1]+40;
+
+        }else{
+            ballVisible = false; 
+            } 
+    }  
+
+//Проверка нажатия мыши
+//Проверка нажатия на кнопку PLAY
+function checkClick1(mouseEvent){
+            if(mouseX > buttonX[0] && mouseX < buttonX[0] + buttonWidth[0] && mouseY > buttonY[0] && mouseY < buttonY[0] + buttonHeight[0]){
+                    
+                    //Постановка флага начала игры в sessionStorage
+                    sessionStorage.setItem('levelcount', 1);
+
+                    //Остановка музыки
+                    mainMenuTheme.pause();
+					alert("Level 1: City of fools");
+
+                    //Переход в файл game_script.html
+                    document.location.href = "game_script.html";
+
+                    //Удаление listener'ов для мыши
+                    canvas.removeEventListener("mousemove", checkPos);
+                    canvas.removeEventListener("mouseup", checkClick1);   
+            }
+        }
+//Проверка нажатия на кнопку RATING
+function checkClick2(mouseEvent){
+            if(mouseX > buttonX[1] && mouseX < buttonX[1] + buttonWidth[1] && mouseY > buttonY[1] && mouseY < buttonY[1] + buttonHeight[1]){
+
+                    //Остановка музыки
+                    mainMenuTheme.pause();
+
+					//Submit для формы перехода в Rating
+                    document.forms["rating"].submit();
+
+                    //Удаление listener'ов для мыши
+                    canvas.removeEventListener("mousemove", checkPos);
+                    canvas.removeEventListener("mouseup", checkClick2);   
+            }
+        }
+
+</script>
+
+</body>
+
+</html>
