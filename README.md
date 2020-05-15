@@ -11,7 +11,7 @@ The game is impossibly simple - the user has at his disposal a platform that he 
 - Intuitive controls with mouse pointer or arrow keys
 - And last but not least - Super Cool Soundtrack! Just give it a try!
 
-## Screenshots and Gaming process
+## Screenshots and Game process
 + Main Menu
 
 ![mainmenu](https://github.com/MeneTelk0/Breakout/blob/master/Images/MainMenu.gif)
@@ -39,5 +39,8 @@ Frontend is fully made with the usage of JavaScript . In the Backend there are s
 To set up PostgreSQL DB and CGI server - look into [tutorial](https://github.com/MeneTelk0/Breakout/blob/master/tutorial_postgres.pdf) (currently in Russian).
 
 After that - open 127.0.0.1:8000 in your favorite (in our opinion) browser and enjoy.
-At this moment **Firefox**(version >= 76.0.1)(recommended) and **Chromium**(version >= 81.0.4044.138) are supported.  
+At this moment **Firefox**(version >= 76.0.1)(recommended) and **Chromium**(version >= 81.0.4044.138) are supported.
+
+## Acknowledgments
+[Dude who put a piece of his soul into this project](https://github.com/vovaf709)
 
