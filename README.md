@@ -6,6 +6,7 @@
 </p>
 
 <img align = "right" src="https://github.com/MeneTelk0/Breakout/blob/master/Images/Game_Process.gif" alt="alt text" width="180">
+
 ## Overview
 The game is impossibly simple - the user has at his disposal a platform that he can control, and a ball that needs to be curbed!  To win - go through all levels and get the highest rating for the number of broken blocks.  Bonuses will help you with this, but beware of traps!
 
