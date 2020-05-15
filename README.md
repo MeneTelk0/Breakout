@@ -22,7 +22,7 @@ The game is impossibly simple - the user has at his disposal a platform that he 
 
 + Ratings table
 
-![rating](https://github.com/MeneTelk0/Breakout/blob/master/Images/ScoreBoard.png =250x250)
+<img src="https://github.com/MeneTelk0/Breakout/blob/master/Images/ScoreBoard.png" width="600">
 
 
 ## Realisation
