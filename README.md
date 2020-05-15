@@ -2,7 +2,7 @@
 
 <p float="left">
 <img src="https://img.shields.io/badge/Language-Python-blue" alt="alt text">
-<img src="https://img.shields.io/badge/Language-JavaScript-orange" alt="alt text"> </a>  
+<img src="https://img.shields.io/badge/Language-JavaScript-orange" alt="alt text">  
 </p>
 
 ## Overview
