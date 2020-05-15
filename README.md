@@ -13,11 +13,16 @@ The game is impossibly simple - the user has at his disposal a platform that he 
 
 ## Screenshots and Gaming process
 + Main Menu
+
 ![mainmenu](https://github.com/MeneTelk0/Breakout/blob/master/Images/MainMenu.gif)
+
 + Game Process
+
 ![GameProcess](https://github.com/MeneTelk0/Breakout/blob/master/Images/Game_Process.gif)
+
 + Ratings table
-![rating](https://github.com/MeneTelk0/Breakout/blob/master/Images/ScoreBoard.png)
+
+![rating](https://github.com/MeneTelk0/Breakout/blob/master/Images/ScoreBoard.png =250x250)
 
 
 ## Realisation
