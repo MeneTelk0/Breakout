@@ -1,7 +1,7 @@
 ![logo](https://github.com/MeneTelk0/Breakout/blob/master/Images/logo.png)
 
 ## Overview
-The game is impossible simple - the user has at his disposal a platform that he can control, and a ball that needs to be curbed!  To win - go through all levels and get the highest rating for the number of broken blocks.  Bonuses will help you with this, but beware of traps!
+The game is impossibly simple - the user has at his disposal a platform that he can control, and a ball that needs to be curbed!  To win - go through all levels and get the highest rating for the number of broken blocks.  Bonuses will help you with this, but beware of traps!
 
 ## Main Features
 - Fancy and Retro graphics!
