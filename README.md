@@ -39,6 +39,7 @@ Frontend is fully made with the usage of JavaScript . In the Backend there are s
 To set up PostgreSQL DB and CGI server - look into [tutorial](https://github.com/MeneTelk0/Breakout/blob/master/tutorial_postgres.pdf) (currently in Russian).
 
 After that - open 127.0.0.1:8000 in your favorite (in our opinion) browser and enjoy.
+
 At this moment **Firefox**(version >= 76.0.1)(recommended) and **Chromium**(version >= 81.0.4044.138) are supported.
 
 ## Acknowledgments
