@@ -1,284 +1,65 @@
-<!DOCTYPE html>
-<html>
-
+<!doctype html>
+<html lang="ru">
 <head>
-
-    <meta charset="utf-8" />
-    <title>BREAKOUT_GAME</title>
-
-    <style>
-        body { padding: 0; margin: 0; } 
-        canvas { background: #000000; display: block; margin: 0 auto; } 
-        body {background-color: #000000}
-    </style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#060d17">
+  <meta name="description" content="NOCTURNE — кинематографичный breakout в заснеженном городе. Разбей тишину.">
+  <title>NOCTURNE — Break the blackout</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="src/style.css">
 </head>
-
-<body> 
-
-    <form name='rating' action='/cgi-bin/view_menu.py'> </form>
-
-    <h3><center>Super Game</center></h3>
-
-<canvas id="myCanvas" width="900" height="563"></canvas>
-
-<script>
-
-    var canvas = document.getElementById("myCanvas");
-    var ctx = canvas.getContext("2d");
-	var Pressed = false;							
-	var flag = -1;
-	
-//Рисовалка рамки по периметру canvas
-    function drawFrame(){
-        //цвет линии
-        ctx.strokeStyle = '#ffffff';
-        //ширина линии
-        ctx.lineWidth = 1;
-        //Нарисовать прямоугольник  
-        ctx.strokeRect(0, 0, 900, 563);
-    }
-
-//Слушатель позиции мышки
-    canvas.addEventListener("mousemove", checkPos);
-
-//Слушатели нажатия кнопки клавиатуры в меню	
-	document.addEventListener("keydown", keyDownHandler, false); 							
-	document.addEventListener("keyup", keyUpHandler, false);	 							
-	
-	function keyDownHandler(e) { 							
-        if(e.keyCode == 66) {
-            Pressed = true;
-			flag += 1;
-			if (flag == 3) {
-				flag = 0;
-			}
-        }
-    }
-
-    function keyUpHandler(e) { 							
-        if(e.keyCode == 66) {
-            Pressed = false;
-        }
-    }
-	
-//Картинки для меню в качестве переменных
-    var backgroundImage = new Image(); 
-    var snowImage = new Image();   
-    var logoImage = new Image();
-    var playImage = new Image();
-    var ratingImage = new Image();
-    var ballImage = new Image();
-
-//timer
-    var frames = 30;
-    var timerId = 0;
-
-//непосредственное обновление картинки через периодический вызов функции update
-    timerId = setInterval(update, 1000/frames);
-    
-//Переменные движения
-    var backgroundY = 0;
-    var speedSnow = 1;
-
-//Переменные для тслеживания позиции мышки на экране
-    var mouseX;
-    var mouseY;
-
-//Переменные для описания шарика и его положений
-    var ballX = [0,0];
-    var ballY = [0,0];
-    var ballWidth = 50;
-    var ballHeight = 50;
- 
-    var ballVisible = false;
-    var ballSize = ballWidth;
-    var ballRotate = 0;
-
-//Переменные для размеров кнопок
-    var buttonX = [205, 300];   //Положение по Х кнопок
-    var buttonY = [220, 400];   //Положение по Y кнопок
-    var buttonWidth = [300, 450];   //Ширина кнопки
-    var buttonHeight = [100, 100];  //Высота кнопки
-
-//Проверка нажатия мыши
-    var fadeId = 0;
-    canvas.addEventListener("mouseup", checkClick1);    //Listener для кнопки Play 
-    canvas.addEventListener("mouseup", checkClick2);    //Listener для кнопки Rating
-
-//переменная времени
-    var time = 0.0;
-
-//Сорсы картинок
-    backgroundImage.src = "Images/background.png";
-    logoImage.src = "Images/logo.png";  
-    playImage.src = "Images/play.png";
-    ratingImage.src = "Images/rating.png";
-    ballImage.src = "Images/ball.png";
-    snowImage.src = "Images/snow.png";
-
-//Инициализация массива изображений
-	var Images = [];
-	for(var i = 0; i < 3; i++) {
-		Images[i] = new Image();
-	}
-	Images[0].src = "Images/background.png";
-	Images[1].src = "Images/lvl1.png";
-	Images[2].src = "Images/background1.png";
-
-
-//Музыка меню
-	var mainMenuTheme = new Audio('Sounds/main_menu_theme.mp3');
-	var sound = 0;
-    
-  
-//Функции отрисовки картинок на экран
-    function drawbackground(){
-		ctx.drawImage(backgroundImage, 0, 0);
-    }
-	
-    //Выбор картинок фона из массива (Смена при нажатии кнопки B)
-	function backgroundchanger(){ 
-		if (Pressed == true) {
-			if (flag == 0) {
-				backgroundImage = Images[0];
-				drawbackground();
-			}
-			else if (flag == 1) {
-				backgroundImage = Images[1];
-				drawbackground();
-			}
-			else if (flag == 2) {
-				backgroundImage = Images[2];
-				drawbackground();
-			}
-		}
-	}
-
-    function drawlogo() {
-        ctx.drawImage(logoImage, 80, 50);
-    }
-
-    function drawplay() {
-        ctx.drawImage(playImage, 200, 220);
-    }
-
-    function drawrating() {
-        ctx.drawImage(ratingImage, 300, 400);
-    }
-
-    function drawsnow() {
-        ctx.drawImage(snowImage, 0, backgroundY - 563);
-    }
-
-//Обновление всей картинки и всего-всего
-    function update() {
-		if (sound == 0) {
-			mainMenuTheme.play();
-			sound++;
-		}
-		if (mainMenuTheme.ended == true) {
-			sound = 0;
-		}
-        clear();
-        move();
-        draw();
-    }
-
-//Описание функций для update()
-    function clear(){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function move(){
-        backgroundY += speedSnow;
-        if(backgroundY == 1 * canvas.height){
-            backgroundY = 0;
-        }
-    }
-
-//Функция рисования всего
-    function draw(){
-		if (Pressed == true) {		 							
-			backgroundchanger();
-		}
-		drawbackground();
-        drawFrame();
-        drawsnow();
-        drawlogo();
-        drawplay();
-        drawrating();
-        if(ballVisible == true){
-            ctx.drawImage(ballImage, ballX[0] - (ballSize/2), ballY[0], ballSize, ballHeight);
-            ctx.drawImage(ballImage, ballX[1] - (ballSize/2), ballY[1], ballSize, ballHeight);
-        }
-    }
-
-//Остальные возможности   
-////////////////////////////////////////////////////////////////////////////
-//Функция проверки положения мыши на экране в зависимости от положения кнопок
-    function checkPos(mouseEvent){
-        mouseX = mouseEvent.pageX - this.offsetLeft;
-        mouseY = mouseEvent.pageY - this.offsetTop;
-
-        if(mouseX > buttonX[0] && mouseX < buttonX[0] + buttonWidth[0] && mouseY > buttonY[0] && mouseY < buttonY[0] + buttonHeight[0]){
-                ballVisible = true;
-                ballX[0] = buttonX[0] - (ballWidth/2) - 2;
-                ballY[0] = buttonY[0]+40;
-                ballX[1] = buttonX[0] + buttonWidth[0] + (ballWidth/2); 
-                ballY[1] = buttonY[0]+40;
-
-        }else
-        if(mouseX > buttonX[1] && mouseX < buttonX[1] + buttonWidth[1] && mouseY > buttonY[1] && mouseY < buttonY[1] + buttonHeight[1]){
-                ballVisible = true;
-                ballX[0] = buttonX[1] - (ballWidth/2) - 2;
-                ballY[0] = buttonY[1]+40;
-                ballX[1] = buttonX[1] + buttonWidth[1] + (ballWidth/2); 
-                ballY[1] = buttonY[1]+40;
-
-        }else{
-            ballVisible = false; 
-            } 
-    }  
-
-//Проверка нажатия мыши
-//Проверка нажатия на кнопку PLAY
-function checkClick1(mouseEvent){
-            if(mouseX > buttonX[0] && mouseX < buttonX[0] + buttonWidth[0] && mouseY > buttonY[0] && mouseY < buttonY[0] + buttonHeight[0]){
-                    
-                    //Постановка флага начала игры в sessionStorage
-                    sessionStorage.setItem('levelcount', 1);
-
-                    //Остановка музыки
-                    mainMenuTheme.pause();
-					alert("Level 1: City of fools");
-
-                    //Переход в файл game_script.html
-                    document.location.href = "game_script.html";
-
-                    //Удаление listener'ов для мыши
-                    canvas.removeEventListener("mousemove", checkPos);
-                    canvas.removeEventListener("mouseup", checkClick1);   
-            }
-        }
-//Проверка нажатия на кнопку RATING
-function checkClick2(mouseEvent){
-            if(mouseX > buttonX[1] && mouseX < buttonX[1] + buttonWidth[1] && mouseY > buttonY[1] && mouseY < buttonY[1] + buttonHeight[1]){
-
-                    //Остановка музыки
-                    mainMenuTheme.pause();
-
-					//Submit для формы перехода в Rating
-                    document.forms["rating"].submit();
-
-                    //Удаление listener'ов для мыши
-                    canvas.removeEventListener("mousemove", checkPos);
-                    canvas.removeEventListener("mouseup", checkClick2);   
-            }
-        }
-
-</script>
-
+<body>
+  <div id="city" class="city-backdrop" aria-hidden="true"></div>
+  <canvas id="atmosphere" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="app" id="app">
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Главное меню">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 32V8h7l16 24h7V8h-7v16L17 8H5"/><path class="brand-slash" d="M3 37 37 3"/></svg>
+        <span>NOCTURNE<small>THE CITY IS YOUR ARCADE</small></span>
+      </button>
+      <div class="weather"><span class="live-dot"></span> СЕКТОР 07 <span class="weather-separator">/</span> −12°C <span class="weather-separator">/</span> СНЕГОПАД</div>
+      <nav aria-label="Навигация">
+        <button id="leaderboardButton" class="nav-button">РЕКОРДЫ <span>↗</span></button>
+        <button id="soundButton" class="icon-button" aria-label="Включить звук" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m11 5-6 4H2v6h3l6 4V5Z"/><path class="sound-waves" d="M15 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-muted" d="m16 9 6 6m0-6-6 6"/></svg></button>
+        <button id="nextTrackButton" class="icon-button" aria-label="Следующий трек" title="Следующий трек" hidden><svg viewBox="0 0 24 24"><path d="m5 5 11 7-11 7V5Zm14 0v14"/></svg></button>
+        <button id="fullscreenButton" class="icon-button" aria-label="Полноэкранный режим"><svg viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+      </nav>
+    </header>
+    <main id="stage" class="stage">
+      <canvas id="gameCanvas" aria-label="Игровое поле Breakout. Мышь, касание или стрелки — движение; пробел — запуск; P — пауза."></canvas>
+      <section id="menu" class="menu">
+        <div class="eyebrow"><span></span> BREAKOUT AFTER DARK <b>VOL. 01</b></div>
+        <h1>РАЗБЕЙ<br><span>ТИШИНУ.</span></h1>
+        <p class="menu-description">Город уснул. Ты — нет.<br>Пробей путь сквозь неон и лёд.</p>
+        <div class="menu-actions"><button id="startButton" class="primary-button">НАЧАТЬ ЗАБЕГ <span>↗</span></button><button id="helpButton" class="text-button">КАК ИГРАТЬ <span>+</span></button></div>
+        <div class="menu-meta"><span><i>06</i> РАЙОНОВ</span><span><i>05</i> УСИЛЕНИЙ</span><span><i>∞</i> ОСКОЛКОВ</span></div>
+      </section>
+      <div id="demoCaption" class="demo-caption"><span class="crosshair">+</span> СИГНАЛ ОБНАРУЖЕН<small>ЭНЕРГИЯ ГОРОДА · 87.4 MHz</small></div>
+      <section id="hud" class="hud" hidden aria-label="Статистика игры">
+        <div class="hud-score"><span class="label">СЧЁТ</span><strong id="score">000000</strong><span id="combo" class="combo">×1</span></div>
+        <div class="hud-level"><span id="sector" class="label">РАЙОН 01 / 06</span><strong id="levelName">Спящий квартал</strong><div class="level-track"><i id="levelProgress"></i></div></div>
+        <div class="hud-right"><span id="lives" class="lives" aria-label="3 жизни">◆ ◆ ◆</span><button id="pauseButton" class="icon-button" aria-label="Пауза"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button></div>
+      </section>
+      <div id="launchHint" class="launch-hint" hidden><span class="launch-line"></span><strong id="launchTitle">ГОРОД ЖДЁТ</strong><span id="launchDescription">ПРОБЕЛ ИЛИ КЛИК — ЗАПУСК</span></div>
+      <div id="announcement" class="announcement" aria-live="polite"></div>
+      <div id="powerups" class="powerups" hidden></div>
+      <button id="overdriveButton" class="overdrive" hidden disabled><span class="overdrive-icon">ϟ</span><span><b>ПЕРЕГРУЗКА</b><small id="overdriveText">ЗАРЯДИ РАЗРУШЕНИЕМ</small></span><span class="overdrive-key">SPACE</span><i id="overdriveFill"></i></button>
+    </main>
+    <footer class="bottom-bar"><span><i class="live-dot"></i> <b id="footerStatus">НОЧЬ ТОЛЬКО НАЧИНАЕТСЯ</b></span><span class="footer-controls" id="footerControls">МЫШЬ / ← → <i>ДВИЖЕНИЕ</i><span class="footer-divider">·</span> ПРОБЕЛ <i>ЗАПУСК</i></span><span class="edition">EST. 00:00 <span>✳</span></span></footer>
+  </div>
+  <div id="modalBackdrop" class="modal-backdrop" hidden>
+    <section id="helpModal" class="modal help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
+      <button class="close-button" data-close aria-label="Закрыть">×</button><div class="eyebrow">ПОЛЕВОЕ РУКОВОДСТВО</div><h2 id="helpTitle">Зажги этот город.</h2><p class="modal-intro">Разрушь все блоки в шести районах. У тебя три жизни. Не дай шару уйти в ночь.</p>
+      <div class="control-grid"><div><kbd>←</kbd> <kbd>→</kbd><strong>Движение</strong><p>Мышь, стрелки или палец. Край платформы меняет угол отскока.</p></div><div><kbd>SPACE</kbd><strong>Запуск / перегрузка</strong><p>Разрушай блоки, заряжай шкалу и включай 8 секунд огненного хаоса.</p></div><div><kbd>P</kbd> <kbd>ESC</kbd><strong>Пауза</strong><p>Переведи дыхание. При уходе с вкладки игра остановится сама.</p></div></div>
+      <div class="power-guide"><span style="--power:#77f5ff">✦ <b>Мультишар</b></span><span style="--power:#b9a0ff">↔ <b>Широкая платформа</b></span><span style="--power:#ffb36a">ϟ <b>Плазма</b></span><span style="--power:#8ef2bf">◷ <b>Замедление</b></span><span style="--power:#74b8ff">◇ <b>Щит</b></span></div>
+      <p class="help-tip">Красные реакторы взрывают соседние блоки. Длинные серии без касания платформы дают больше очков.</p><button class="primary-button" id="helpStart">Я ГОТОВ <span>↗</span></button>
+    </section>
+    <section id="pauseModal" class="modal compact-modal" role="dialog" aria-modal="true" aria-labelledby="pauseTitle" hidden><div class="eyebrow">СИГНАЛ ПРИОСТАНОВЛЕН</div><h2 id="pauseTitle">Город подождёт.</h2><p class="modal-intro">Вдохни. Выдохни. Разрушай.</p><button id="resumeButton" class="primary-button">ПРОДОЛЖИТЬ <span>→</span></button><button id="restartButton" class="text-button">НАЧАТЬ ЗАНОВО</button><button id="quitButton" class="text-button">В ГЛАВНОЕ МЕНЮ</button></section>
+    <section id="resultModal" class="modal result-modal" role="dialog" aria-modal="true" aria-labelledby="resultTitle" hidden><div class="eyebrow" id="resultEyebrow">СИГНАЛ ПОТЕРЯН</div><h2 id="resultTitle">Ночь запомнит.</h2><div class="result-score" id="resultScore">0</div><div id="newRecord" class="new-record" hidden>✦ НОВЫЙ ЛИЧНЫЙ РЕКОРД</div><div class="result-stats"><span>РАЙОН<strong id="resultLevel">01 / 06</strong></span><span>ЛУЧШЕЕ КОМБО<strong id="resultCombo">×1</strong></span><span>РАЗРУШЕНО<strong id="resultDestroyed">0</strong></span></div><form id="scoreForm" class="score-form"><label for="playerName">ОСТАВЬ СВОЁ ИМЯ В ГОРОДЕ</label><div><input id="playerName" name="name" maxlength="20" placeholder="Твой позывной" autocomplete="nickname" required><button type="submit" id="saveScoreButton" aria-label="Сохранить рекорд">↗</button></div><p id="saveStatus" aria-live="polite"></p></form><button id="playAgainButton" class="primary-button">ЕЩЁ ОДНА НОЧЬ <span>↗</span></button><button id="resultHomeButton" class="text-button">В ГЛАВНОЕ МЕНЮ</button></section>
+    <section id="leaderboardModal" class="modal leaderboard-modal" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle" hidden><button class="close-button" data-close aria-label="Закрыть">×</button><div class="eyebrow">ЛЕГЕНДЫ ПОЛУНОЧИ</div><h2 id="leaderboardTitle">Их помнит город.</h2><p id="leaderboardStatus" class="modal-intro">Подключаемся к городской сети…</p><div class="leaderboard-head"><span>#</span><span>ПОЗЫВНОЙ</span><span>СЧЁТ</span></div><ol id="leaderboardList" class="leaderboard-list"></ol><div class="personal-best">ТВОЙ ЛУЧШИЙ РЕЗУЛЬТАТ <strong id="personalBest">0</strong></div></section>
+  </div>
+  <script type="module" src="src/main.js"></script>
 </body>
-
 </html>

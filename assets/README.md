@@ -1,0 +1,7 @@
+# City panorama
+
+`nocturne-city.png` was generated with the built-in imagegen tool and copied into this repository. The original output remains at the tool's generated-images location. The favicon is a project-native SVG.
+
+Final image prompt:
+
+> Use case: stylized-concept. Asset type: ultra-wide background plate for a premium browser arcade game named NOCTURNE, no text in the image. Create a breathtaking cinematic snow-covered dark futuristic city at midnight, viewed from an elevated rooftop looking down a long central urban canyon. Brutalist apartment towers and densely stacked buildings along both edges, glowing cyan and pale violet windows, a few distant warm amber lights, very fine winter mist, atmospheric depth, wet snowy rooftop parapets near the bottom. A large partially obscured pale moon high in the right third. Sophisticated deep navy-black, desaturated petrol blue, ice cyan; magenta only very subtle near street level. High-end painterly 3D game environment art, realistic architectural detail, evocative and quiet, visually rich but very dark. Composition is landscape 16:9 with clear dark negative space in the central upper half and central lower half to overlay a breakout game. Buildings must form the sides and far background, not block the central gameplay area. Light snowfall only, we will animate foreground snow in code. No characters, no words, no logo, no interface, no borders, no visible arcade blocks, no watermark. Output a detailed 2560x1440 landscape image.
